@@ -11,4 +11,5 @@ Rules:
 - Separate mock data and source code.
 - Keep the project code clean, eliminate all redundant code.
 - Use best solutions and best practices to do the task.
+- All the UI content will be in vietnamese
 - Summarize what things you've done and things not done yet before you finish the task.

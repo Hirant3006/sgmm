@@ -25,7 +25,7 @@ const MachineTab = () => {
         });
         
         if (!machinesResponse.ok) {
-          throw new Error('Không thể tải dữ liệu máy móc');
+          throw new Error('Failed to load machines data');
         }
         
         const machinesData = await machinesResponse.json();
@@ -39,7 +39,7 @@ const MachineTab = () => {
         });
         
         if (!machineTypesResponse.ok) {
-          throw new Error('Không thể tải dữ liệu loại máy');
+          throw new Error('Failed to load machine types data');
         }
         
         const machineTypesData = await machineTypesResponse.json();
@@ -74,7 +74,7 @@ const MachineTab = () => {
     }
   };
 
-  // Add a new machine
+  // Add a new machine with auto-generated ID
   const addMachine = async (machine) => {
     try {
       const response = await fetch('/api/machines', {
@@ -88,7 +88,7 @@ const MachineTab = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Không thể thêm máy mới');
+        throw new Error(errorData.message || 'Failed to add new machine');
       }
       
       const newMachine = await response.json();
@@ -104,7 +104,7 @@ const MachineTab = () => {
           updatedMachines
       );
       setIsModalVisible(false);
-      message.success('Thêm máy mới thành công');
+      message.success('Machine added successfully');
     } catch (err) {
       message.error(err.message);
     }
@@ -113,7 +113,7 @@ const MachineTab = () => {
   // Update an existing machine
   const updateMachine = async (machine) => {
     try {
-      const response = await fetch(`/api/machines/${machine.machine_id}`, {
+      const response = await fetch(`/api/machines/${currentMachine.machine_id}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -124,13 +124,13 @@ const MachineTab = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Không thể cập nhật máy');
+        throw new Error(errorData.message || 'Failed to update machine');
       }
       
       const updatedMachine = await response.json();
       
       const updatedMachines = machines.map((item) => 
-        item.machine_id === machine.machine_id ? updatedMachine.data : item
+        item.machine_id === currentMachine.machine_id ? updatedMachine.data : item
       );
       
       setMachines(updatedMachines);
@@ -146,7 +146,7 @@ const MachineTab = () => {
       
       setIsModalVisible(false);
       setCurrentMachine(null);
-      message.success('Cập nhật máy thành công');
+      message.success('Machine updated successfully');
     } catch (err) {
       message.error(err.message);
     }
@@ -162,7 +162,7 @@ const MachineTab = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Không thể xóa máy');
+        throw new Error(errorData.message || 'Failed to delete machine');
       }
       
       const updatedMachines = machines.filter((machine) => machine.machine_id !== machineId);
@@ -176,7 +176,7 @@ const MachineTab = () => {
           ) : 
           updatedMachines
       );
-      message.success('Xóa máy thành công');
+      message.success('Machine deleted successfully');
     } catch (err) {
       message.error(err.message);
     }
@@ -203,7 +203,7 @@ const MachineTab = () => {
   // Handle form submission
   const handleSubmit = (values) => {
     if (currentMachine) {
-      updateMachine({ ...values, machine_id: currentMachine.machine_id });
+      updateMachine(values);
     } else {
       addMachine(values);
     }
@@ -213,7 +213,7 @@ const MachineTab = () => {
     <div>
       <Space style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <Input
-          placeholder="Tìm kiếm theo mã máy hoặc loại máy"
+          placeholder="Search by machine ID or type"
           prefix={<SearchOutlined />}
           onChange={handleSearch}
           style={{ width: 300 }}
@@ -224,7 +224,7 @@ const MachineTab = () => {
           icon={<PlusOutlined />} 
           onClick={showAddModal}
         >
-          Thêm Máy Mới
+          Add New Machine
         </Button>
       </Space>
       

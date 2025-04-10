@@ -1,3 +1,67 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap');
+
+/* Global resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* We use the theme provider for most styling,
+   this file just contains base resets and fonts */
+
+/* Handle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bbbbbb;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}
+
+/* For dark mode scrollbars */
+body.dark ::-webkit-scrollbar-track {
+  background: #333;
+}
+
+body.dark ::-webkit-scrollbar-thumb {
+  background: #666;
+}
+
+body.dark ::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* Transitions */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
 :root {
   --primary-color: #3498db;
   --secondary-color: #2ecc71;
@@ -6,12 +70,6 @@
   --error-color: #e74c3c;
   --success-color: #27ae60;
   --border-color: #ddd;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 body {

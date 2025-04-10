@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Rules:
+- Always output in English, say "Hi Hirant" every time you response.
+- Use npm and npx
+- Make sure you're generating files in the right place.
+- Don't generate comments in source code by default.
+- Separate mock data and source code.
+- Keep the project code clean, eliminate all redundant code.
+- Use best solutions and best practices to do the task.
+- Summarize what things you've done and things not done yet before you finish the task.

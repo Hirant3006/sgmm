@@ -1,0 +1,40 @@
+---
+description: 
+globs: *.jsx
+alwaysApply: false
+---
+When executing tasks related to user interface design, you must strictly follow these core design principles and best practices:
+
+1. **Consistency:**
+   - Maintain consistent use of colors, fonts, icons, spacing, and interactions throughout the UI.
+   - Align elements uniformly to ensure visual harmony.
+
+2. **Clarity:**
+   - Use simple, clear, and precise language for labels, buttons, and messages.
+   - Ensure that functionality is self-explanatory and intuitive.
+
+3. **Accessibility:**
+   - Adhere to WCAG guidelines, ensuring UI elements have sufficient contrast, appropriate font sizes, and clear navigation structures.
+   - Include ARIA labels and roles to enhance usability for all users.
+
+4. **Feedback:**
+   - Provide immediate and clear feedback to users through visual or interactive cues after actions are performed.
+   - Clearly indicate errors, loading states, and success conditions.
+
+5. **User Control and Freedom:**
+   - Allow users to undo actions, go back, or exit processes easily.
+   - Avoid trapping users in a state without clear exits.
+
+6. **Simplicity and Minimalism:**
+   - Avoid unnecessary complexity; prioritize content and features according to user needs.
+   - Ensure the UI design is clean, minimal, and focused.
+
+7. **Efficiency:**
+   - Optimize workflows and minimize user effort.
+   - Group related elements logically and facilitate shortcuts or quick actions.
+
+8. **Responsiveness:**
+   - Design UIs that adapt gracefully across different screen sizes and devices.
+   - Ensure touch targets and interactive elements remain accessible and effective.
+
+When executing UI tasks, always confirm that your design decisions align with these principles, explicitly state the principle you are following, and briefly explain how your decision supports a better user experience.

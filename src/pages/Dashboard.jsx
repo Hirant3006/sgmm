@@ -59,29 +59,29 @@ const Dashboard = () => {
   
   // Sample data for dashboard
   const recentActivities = [
-    { id: 1, user: 'Admin', action: 'Added new machine', time: '2 hours ago' },
-    { id: 2, user: 'Admin', action: 'Updated machine type', time: '1 day ago' },
-    { id: 3, user: 'User', action: 'Viewed machine list', time: '3 days ago' },
+    { id: 1, user: 'Admin', action: 'Thêm máy mới', time: '2 giờ trước' },
+    { id: 2, user: 'Admin', action: 'Cập nhật loại máy', time: '1 ngày trước' },
+    { id: 3, user: 'User', action: 'Xem danh sách máy', time: '3 ngày trước' },
   ];
   
   // Quick access links
   const quickLinks = [
     { 
-      title: 'Machines',
+      title: 'Máy Móc',
       icon: <ToolOutlined className="card-icon" />,
-      description: 'Manage all machines',
+      description: 'Quản lý tất cả máy móc',
       link: '/machines'
     },
     { 
-      title: 'Machine Types',
+      title: 'Loại Máy',
       icon: <SettingOutlined className="card-icon" />,
-      description: 'Configure machine types',
+      description: 'Cấu hình loại máy',
       link: '/machines?tab=types'
     },
     { 
-      title: 'Settings',
+      title: 'Cài Đặt',
       icon: <AppstoreOutlined className="card-icon" />,
-      description: 'System configuration',
+      description: 'Cấu hình hệ thống',
       link: '/settings'
     },
   ];
@@ -91,16 +91,16 @@ const Dashboard = () => {
       <Row gutter={[24, 24]} align="middle">
         <Col xs={24} md={16}>
           <Title level={2} style={{ margin: 0 }}>
-            Welcome back, {user?.username || 'User'}
+            Xin chào, {user?.username || 'User'}
           </Title>
           <Paragraph type="secondary">
-            Here's what's happening with your machine management system
+            Đây là tổng quan về hệ thống quản lý máy móc của bạn
           </Paragraph>
         </Col>
         <Col xs={24} md={8} style={{ textAlign: 'right' }}>
           <Space>
             <Text type="secondary">
-              {new Date().toLocaleDateString('en-US', { 
+              {new Date().toLocaleDateString('vi-VN', { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
@@ -117,7 +117,7 @@ const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <StyledCard>
             <Statistic 
-              title="Total Machines" 
+              title="Tổng Máy Móc" 
               value={42} 
               prefix={<ToolOutlined />} 
               valueStyle={{ color: '#1677ff' }}
@@ -127,7 +127,7 @@ const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <StyledCard>
             <Statistic 
-              title="Machine Types" 
+              title="Loại Máy" 
               value={8} 
               prefix={<SettingOutlined />}
               valueStyle={{ color: '#52c41a' }}
@@ -137,7 +137,7 @@ const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <StyledCard>
             <Statistic 
-              title="Active Users" 
+              title="Người Dùng Hoạt Động" 
               value={5} 
               prefix={<UserOutlined />}
               valueStyle={{ color: '#faad14' }}
@@ -147,7 +147,7 @@ const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <StyledCard>
             <Statistic 
-              title="System Uptime" 
+              title="Thời Gian Hoạt Động" 
               value="99.9%" 
               prefix={<RiseOutlined />}
               valueStyle={{ color: '#13c2c2' }}
@@ -158,7 +158,7 @@ const Dashboard = () => {
       
       <Row gutter={[24, 24]}>
         <Col xs={24} lg={16}>
-          <StyledCard title="Quick Access">
+          <StyledCard title="Truy Cập Nhanh">
             <Row gutter={[16, 16]}>
               {quickLinks.map((link, index) => (
                 <Col xs={24} sm={8} key={index}>
@@ -179,8 +179,8 @@ const Dashboard = () => {
         
         <Col xs={24} lg={8}>
           <StyledCard 
-            title="Recent Activity" 
-            extra={<Button type="link">See All</Button>}
+            title="Hoạt Động Gần Đây" 
+            extra={<Button type="link">Xem Tất Cả</Button>}
           >
             <List
               itemLayout="horizontal"

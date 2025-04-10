@@ -108,7 +108,7 @@ const Login = () => {
     
     if (!result.success) {
       // Login failed, set form error
-      setFormError(result.message || 'Login failed. Please try again.');
+      setFormError(result.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
     }
     // If successful, the useEffect will handle navigation
   };
@@ -124,12 +124,12 @@ const Login = () => {
             </LogoContainer>
             
             <Title level={3} style={{ textAlign: 'center', margin: '0 0 24px' }}>
-              Sign in to your account
+              Đăng nhập vào hệ thống
             </Title>
             
             {(formError || error) && (
               <Alert
-                message="Authentication Error"
+                message="Lỗi Xác Thực"
                 description={formError || error}
                 type="error"
                 showIcon
@@ -147,11 +147,11 @@ const Login = () => {
             >
               <Form.Item
                 name="username"
-                rules={[{ required: true, message: 'Please input your username!' }]}
+                rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}
               >
                 <Input 
                   prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />} 
-                  placeholder="Username"
+                  placeholder="Tên đăng nhập"
                   autoComplete="username"
                   autoFocus
                 />
@@ -159,11 +159,11 @@ const Login = () => {
               
               <Form.Item
                 name="password"
-                rules={[{ required: true, message: 'Please input your password!' }]}
+                rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
               >
                 <Input.Password 
                   prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }} />} 
-                  placeholder="Password"
+                  placeholder="Mật khẩu"
                   autoComplete="current-password"
                 />
               </Form.Item>
@@ -177,30 +177,30 @@ const Login = () => {
                   size="large"
                   icon={<LoginOutlined />}
                 >
-                  Sign In
+                  Đăng Nhập
                 </Button>
               </Form.Item>
             </Form>
             
             <Divider plain>
-              <Text type="secondary">Demo Credentials</Text>
+              <Text type="secondary">Thông tin đăng nhập mẫu</Text>
             </Divider>
             
             <Flex justify="center" gap="middle">
               <Space direction="vertical" size={0} align="center">
-                <Text type="secondary" strong>Username</Text>
+                <Text type="secondary" strong>Tên đăng nhập</Text>
                 <Text copyable>admin</Text>
               </Space>
               
               <Space direction="vertical" size={0} align="center">
-                <Text type="secondary" strong>Password</Text>
+                <Text type="secondary" strong>Mật khẩu</Text>
                 <Text copyable>admin</Text>
               </Space>
             </Flex>
             
             <ThemeToggle $isDark={isDark}>
               <BulbOutlined />
-              <Text className="theme-label">Dark Mode</Text>
+              <Text className="theme-label">Chế độ tối</Text>
               <Switch 
                 size="small" 
                 checked={isDark} 

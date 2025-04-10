@@ -152,19 +152,19 @@ const MainLayout = () => {
     {
       key: 'dashboard',
       icon: <DashboardOutlined />,
-      label: 'Dashboard',
+      label: 'Trang Chủ',
       path: '/',
     },
     {
       key: 'machines',
       icon: <ToolOutlined />,
-      label: 'Machine Management',
+      label: 'Quản Lý Máy Móc',
       path: '/machines',
     },
     {
       key: 'settings',
       icon: <SettingOutlined />,
-      label: 'Settings',
+      label: 'Cài Đặt',
       path: '/settings',
     },
   ];
@@ -185,13 +185,13 @@ const MainLayout = () => {
       {
         key: 'profile',
         icon: <UserOutlined />,
-        label: 'Profile',
+        label: 'Hồ Sơ',
         onClick: () => navigate('/profile'),
       },
       {
         key: 'settings',
         icon: <SettingOutlined />,
-        label: 'Account Settings',
+        label: 'Cài Đặt Tài Khoản',
         onClick: () => navigate('/settings'),
       },
       {
@@ -200,7 +200,7 @@ const MainLayout = () => {
       {
         key: 'logout',
         icon: <LogoutOutlined />,
-        label: 'Logout',
+        label: 'Đăng Xuất',
         onClick: handleLogout,
       },
     ],
@@ -239,14 +239,14 @@ const MainLayout = () => {
           onClick={toggleTheme}
           style={{ width: '100%', justifyContent: 'flex-start' }}
         >
-          {!collapsed && (isDark ? 'Light Mode' : 'Dark Mode')}
+          {!collapsed && (isDark ? 'Chế Độ Sáng' : 'Chế Độ Tối')}
         </Button>
         <Button
           type="text"
           icon={<QuestionCircleOutlined />}
           style={{ width: '100%', justifyContent: 'flex-start' }}
         >
-          {!collapsed && 'Help'}
+          {!collapsed && 'Trợ Giúp'}
         </Button>
       </Space>
     </>
@@ -306,11 +306,11 @@ const MainLayout = () => {
           </Title>
           
           <Space size={16}>
-            <Tooltip title="Search">
+            <Tooltip title="Tìm Kiếm">
               <Button type="text" icon={<SearchOutlined />} />
             </Tooltip>
             
-            <Tooltip title="Notifications">
+            <Tooltip title="Thông Báo">
               <Badge count={notifications.length} dot>
                 <Button type="text" icon={<BellOutlined />} />
               </Badge>

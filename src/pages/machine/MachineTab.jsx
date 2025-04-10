@@ -25,7 +25,7 @@ const MachineTab = () => {
         });
         
         if (!machinesResponse.ok) {
-          throw new Error('Failed to load machines data');
+          throw new Error('Không thể tải dữ liệu máy móc');
         }
         
         const machinesData = await machinesResponse.json();
@@ -39,7 +39,7 @@ const MachineTab = () => {
         });
         
         if (!machineTypesResponse.ok) {
-          throw new Error('Failed to load machine types data');
+          throw new Error('Không thể tải dữ liệu loại máy');
         }
         
         const machineTypesData = await machineTypesResponse.json();
@@ -88,7 +88,7 @@ const MachineTab = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add new machine');
+        throw new Error(errorData.message || 'Không thể thêm máy mới');
       }
       
       const newMachine = await response.json();
@@ -104,7 +104,7 @@ const MachineTab = () => {
           updatedMachines
       );
       setIsModalVisible(false);
-      message.success('Machine added successfully');
+      message.success('Thêm máy mới thành công');
     } catch (err) {
       message.error(err.message);
     }
@@ -124,7 +124,7 @@ const MachineTab = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update machine');
+        throw new Error(errorData.message || 'Không thể cập nhật máy');
       }
       
       const updatedMachine = await response.json();
@@ -146,7 +146,7 @@ const MachineTab = () => {
       
       setIsModalVisible(false);
       setCurrentMachine(null);
-      message.success('Machine updated successfully');
+      message.success('Cập nhật máy thành công');
     } catch (err) {
       message.error(err.message);
     }
@@ -162,7 +162,7 @@ const MachineTab = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete machine');
+        throw new Error(errorData.message || 'Không thể xóa máy');
       }
       
       const updatedMachines = machines.filter((machine) => machine.machine_id !== machineId);
@@ -176,7 +176,7 @@ const MachineTab = () => {
           ) : 
           updatedMachines
       );
-      message.success('Machine deleted successfully');
+      message.success('Xóa máy thành công');
     } catch (err) {
       message.error(err.message);
     }
@@ -213,7 +213,7 @@ const MachineTab = () => {
     <div>
       <Space style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <Input
-          placeholder="Search by machine ID or type"
+          placeholder="Tìm kiếm theo mã máy hoặc loại máy"
           prefix={<SearchOutlined />}
           onChange={handleSearch}
           style={{ width: 300 }}
@@ -224,7 +224,7 @@ const MachineTab = () => {
           icon={<PlusOutlined />} 
           onClick={showAddModal}
         >
-          Add New Machine
+          Thêm Máy Mới
         </Button>
       </Space>
       

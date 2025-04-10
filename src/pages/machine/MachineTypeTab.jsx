@@ -23,7 +23,7 @@ const MachineTypeTab = () => {
         });
         
         if (!response.ok) {
-          throw new Error('Failed to load machine types data');
+          throw new Error('Không thể tải dữ liệu loại máy');
         }
         
         const data = await response.json();
@@ -73,7 +73,7 @@ const MachineTypeTab = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add new machine type');
+        throw new Error(errorData.message || 'Không thể thêm loại máy mới');
       }
       
       const newMachineType = await response.json();
@@ -89,7 +89,7 @@ const MachineTypeTab = () => {
           updatedMachineTypes
       );
       setIsModalVisible(false);
-      message.success('Machine type added successfully');
+      message.success('Thêm loại máy mới thành công');
     } catch (err) {
       message.error(err.message);
     }
@@ -109,7 +109,7 @@ const MachineTypeTab = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update machine type');
+        throw new Error(errorData.message || 'Không thể cập nhật loại máy');
       }
       
       const updatedMachineType = await response.json();
@@ -131,7 +131,7 @@ const MachineTypeTab = () => {
       
       setIsModalVisible(false);
       setCurrentMachineType(null);
-      message.success('Machine type updated successfully');
+      message.success('Cập nhật loại máy thành công');
     } catch (err) {
       message.error(err.message);
     }
@@ -147,7 +147,7 @@ const MachineTypeTab = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete machine type');
+        throw new Error(errorData.message || 'Không thể xóa loại máy');
       }
       
       const updatedMachineTypes = machineTypes.filter((type) => type.machine_type_id !== machineTypeId);
@@ -161,7 +161,7 @@ const MachineTypeTab = () => {
           ) : 
           updatedMachineTypes
       );
-      message.success('Machine type deleted successfully');
+      message.success('Xóa loại máy thành công');
     } catch (err) {
       message.error(err.message);
     }
@@ -198,7 +198,7 @@ const MachineTypeTab = () => {
     <div>
       <Space style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <Input
-          placeholder="Search by machine type ID or name"
+          placeholder="Tìm kiếm theo mã loại máy hoặc tên loại máy"
           prefix={<SearchOutlined />}
           onChange={handleSearch}
           style={{ width: 300 }}
@@ -209,7 +209,7 @@ const MachineTypeTab = () => {
           icon={<PlusOutlined />} 
           onClick={showAddModal}
         >
-          Add New Machine Type
+          Thêm Loại Máy Mới
         </Button>
       </Space>
       

@@ -54,7 +54,7 @@ const MachineManagementPage = () => {
             label: (
               <span>
                 <ToolOutlined />
-                Machines
+                Máy Móc
               </span>
             ),
             children: <MachineTab />
@@ -64,7 +64,7 @@ const MachineManagementPage = () => {
             label: (
               <span>
                 <TagsOutlined />
-                Machine Types
+                Loại Máy
               </span>
             ),
             children: <MachineTypeTab />

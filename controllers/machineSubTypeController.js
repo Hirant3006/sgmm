@@ -29,16 +29,16 @@ const getMachineSubTypeById = async (req, res) => {
 
 // Create a new machine subtype
 const createMachineSubType = async (req, res) => {
-  const { machine_subtype_id, name } = req.body;
+  const { name } = req.body;
   
-  if (!machine_subtype_id || !name) {
+  if (!name) {
     return res.status(400).json({ success: false, message: 'Thiếu thông tin bắt buộc' });
   }
   
   try {
     const result = await db.query(
-      'INSERT INTO machine_subtypes (machine_subtype_id, name) VALUES ($1, $2) RETURNING *',
-      [machine_subtype_id, name]
+      'INSERT INTO machine_subtypes (name) VALUES ($1) RETURNING *',
+      [name]
     );
     
     res.status(201).json({ success: true, data: result.rows[0] });

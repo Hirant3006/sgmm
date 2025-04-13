@@ -46,11 +46,11 @@ const initializeDatabase = async () => {
     
     // Create machine tables with empty data
     try {
-      const migrationPath = path.join(__dirname, 'migrations', 'create_empty_tables.sql');
+      const migrationPath = path.join(__dirname, 'migrations', 'create_machine_tables.sql');
       if (fs.existsSync(migrationPath)) {
         const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
         await db.query(migrationSQL);
-        console.log('Machine tables initialized with empty data');
+        console.log('Machine tables initialized with auto-generated IDs');
       } else {
         console.error('Migration file not found:', migrationPath);
       }

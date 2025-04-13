@@ -6,21 +6,44 @@ CREATE TABLE IF NOT EXISTS machine_types (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create sequence for machine_subtypes
+CREATE SEQUENCE IF NOT EXISTS machine_subtypes_id_seq;
+
 -- Create machine_subtypes table
 CREATE TABLE IF NOT EXISTS machine_subtypes (
-    machine_subtype_id SERIAL PRIMARY KEY,
-    machine_type_id INTEGER REFERENCES machine_types(machine_type_id),
+    id SERIAL,
+    machine_subtype_id VARCHAR(10) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create machines table
+-- Create function to generate machine_subtype_id
+CREATE OR REPLACE FUNCTION generate_machine_subtype_id()
+RETURNS TRIGGER AS $$
+DECLARE
+    next_id INTEGER;
+BEGIN
+    -- Get the next value from the sequence
+    SELECT nextval('machine_subtypes_id_seq') INTO next_id;
+    -- Set the machine_subtype_id using the id value
+    NEW.machine_subtype_id := 'ST' || LPAD(next_id::text, 3, '0');
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to automatically generate machine_subtype_id
+DROP TRIGGER IF EXISTS generate_machine_subtype_id_trigger ON machine_subtypes;
+CREATE TRIGGER generate_machine_subtype_id_trigger
+    BEFORE INSERT ON machine_subtypes
+    FOR EACH ROW
+    EXECUTE FUNCTION generate_machine_subtype_id();
+
+-- Create machines table with foreign key to machine_types
 CREATE TABLE IF NOT EXISTS machines (
     id SERIAL,
     machine_id VARCHAR(10) PRIMARY KEY,
     machine_type_id INTEGER REFERENCES machine_types(machine_type_id),
-    machine_subtype_id INTEGER REFERENCES machine_subtypes(machine_subtype_id),
     name VARCHAR(100) NOT NULL,
     price DECIMAL(15,2) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -57,35 +80,27 @@ VALUES
 ON CONFLICT (machine_type_id) DO NOTHING;
 
 -- Add sample data for machine_subtypes
-INSERT INTO machine_subtypes (machine_type_id, name) 
-SELECT mt.machine_type_id, 'Máy in laser' FROM machine_types mt WHERE mt.name = 'Máy in'
-UNION ALL
-SELECT mt.machine_type_id, 'Máy in phun' FROM machine_types mt WHERE mt.name = 'Máy in'
-UNION ALL
-SELECT mt.machine_type_id, 'Máy scan phẳng' FROM machine_types mt WHERE mt.name = 'Máy scan'
-UNION ALL
-SELECT mt.machine_type_id, 'Máy scan đa chức năng' FROM machine_types mt WHERE mt.name = 'Máy scan'
-UNION ALL
-SELECT mt.machine_type_id, 'Máy photocopy màu' FROM machine_types mt WHERE mt.name = 'Máy photocopy'
-UNION ALL
-SELECT mt.machine_type_id, 'Máy photocopy đen trắng' FROM machine_types mt WHERE mt.name = 'Máy photocopy';
+INSERT INTO machine_subtypes (name) 
+VALUES 
+    ('Máy in laser'),
+    ('Máy in phun'),
+    ('Máy scan phẳng'),
+    ('Máy scan đa chức năng'),
+    ('Máy photocopy màu'),
+    ('Máy photocopy đen trắng');
 
 -- Add sample data for machines
-INSERT INTO machines (machine_type_id, machine_subtype_id, name, price)
+INSERT INTO machines (machine_type_id, name, price)
 SELECT 
     mt.machine_type_id,
-    ms.machine_subtype_id,
     'HP LaserJet Pro M404dn',
     15000000
 FROM machine_types mt 
-JOIN machine_subtypes ms ON ms.machine_type_id = mt.machine_type_id 
-WHERE mt.name = 'Máy in' AND ms.name = 'Máy in laser'
+WHERE mt.name = 'Máy in'
 UNION ALL
 SELECT 
     mt.machine_type_id,
-    ms.machine_subtype_id,
     'Canon PIXMA TS8270',
     8000000
 FROM machine_types mt 
-JOIN machine_subtypes ms ON ms.machine_type_id = mt.machine_type_id 
-WHERE mt.name = 'Máy in' AND ms.name = 'Máy in phun'; 
+WHERE mt.name = 'Máy in'; 

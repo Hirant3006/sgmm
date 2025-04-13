@@ -5,6 +5,7 @@ const router = express.Router();
 const authRoutes = require('./auth');
 const machineRoutes = require('./machineRoutes');
 const machineTypeRoutes = require('./machineTypeRoutes');
+const machineSubTypeRoutes = require('./machineSubTypeRoutes');
 
 // Import auth middleware
 const authMiddleware = require('../middleware/auth');
@@ -20,5 +21,6 @@ router.use('/auth', authRoutes);
 // Protected routes - require authentication
 router.use('/machines', machineRoutes);
 router.use('/machine-types', machineTypeRoutes);
+router.use('/machine-subtypes', machineSubTypeRoutes);
 
 module.exports = router; 

@@ -1,0 +1,102 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# System for Machine Management (SGMM)
+
+## Project Overview
+SGMM is a full-stack web application for managing machines, machine types, and machine subtypes. The system provides a user-friendly interface in Vietnamese for administrators to perform CRUD operations on various machine-related entities.
+
+## Technology Stack
+- **Frontend**: React, Vite, Ant Design, Styled Components
+- **Backend**: Node.js, Express
+- **Database**: PostgreSQL
+- **Authentication**: JWT with cookie-based storage
+- **Development Tools**: Nodemon, Concurrently
+
+## Project Structure
+```
+sgmm/
+├── src/                    # Frontend source code
+│   ├── components/         # Reusable UI components
+│   ├── pages/              # Page components
+│   ├── context/            # React context providers
+│   ├── theme/              # Theme configuration
+│   ├── assets/             # Static assets
+│   └── server/             # Backend server code
+├── migrations/             # Database migration scripts
+├── scripts/                # Utility scripts
+├── config/                 # Configuration files
+├── middleware/             # Express middleware
+├── documents/              # Project documentation
+│   ├── PRD/                # Product Requirements Documents
+│   ├── testcase/           # Test cases
+│   └── technicaldocs/      # Technical documentation
+└── public/                 # Static public files
+```
+
+## Key Features
+1. **Machine Management**
+   - CRUD operations for machines
+   - Machine type categorization
+   - Machine subtype classification
+   - Price tracking
+
+2. **User Authentication**
+   - Secure login system
+   - JWT-based authentication
+   - Role-based access control
+
+3. **Database Schema**
+   - Machine Types Table
+   - Machine Subtypes Table
+   - Machines Table
+   - Users Table
+
+## Development Workflow
+1. **Local Development**
+   - Frontend: `npm run dev:client` (Vite dev server)
+   - Backend: `npm run dev:server` (Nodemon)
+   - Combined: `npm run dev` (Concurrently)
+
+2. **Database Migrations**
+   - Automated table creation on server startup
+   - Sample data insertion for testing
+
+3. **Production Build**
+   - Frontend: `npm run build`
+   - Server: `npm start`
+
+## API Endpoints
+- `/api/auth/*` - Authentication routes
+- `/api/machines` - Machine management
+- `/api/machine-types` - Machine type management
+- `/api/machine-subtypes` - Machine subtype management
+
+## UI/UX Guidelines
+- Vietnamese language interface
+- Clean, minimalist design
+- Responsive layout
+- Consistent styling with Ant Design
+- Clear feedback for user actions
+
+## Best Practices
+- Separation of concerns (frontend/backend)
+- Modular component architecture
+- Secure authentication implementation
+- Error handling and logging
+- Database migration management
+- Code organization and documentation
+
+## Testing Strategy
+- Unit tests for components
+- Integration tests for API endpoints
+- End-to-end testing for critical workflows
+- Test cases documented in `/documents/testcase`
+
+## Documentation
+- PRD for each feature in `/documents/PRD`
+- Technical documentation in `/documents/technicaldocs`
+- Test cases in `/documents/testcase`
+- Page-specific documentation in respective directories 

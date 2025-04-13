@@ -32,21 +32,18 @@ class MachineType {
   }
 
   static async create(machineType) {
-    const { machine_type_id, name } = machineType;
+    const { name } = machineType;
     
     const query = `
-      INSERT INTO machine_types (machine_type_id, name)
-      VALUES ($1, $2)
+      INSERT INTO machine_types (name)
+      VALUES ($1)
       RETURNING *
     `;
     
     try {
-      const { rows } = await db.query(query, [machine_type_id, name]);
+      const { rows } = await db.query(query, [name]);
       return rows[0];
     } catch (error) {
-      if (error.code === '23505') { // Unique violation
-        throw new Error('Machine type ID already exists');
-      }
       throw new Error(`Error creating machine type: ${error.message}`);
     }
   }
@@ -102,10 +99,6 @@ class MachineType {
       
       return result.rows[0];
     } catch (error) {
-      // If error is foreign key violation, provide better message
-      if (error.code === '23503') {
-        throw new Error('Cannot delete machine type that is being used by machines');
-      }
       throw new Error(`Error deleting machine type: ${error.message}`);
     }
   }

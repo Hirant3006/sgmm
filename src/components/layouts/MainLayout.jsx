@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../theme/ThemeProvider';
+import logoImage from '../../assets/logo.jpg';
 import {
   Layout,
   Menu,
@@ -41,10 +42,17 @@ const StyledLogo = styled.div`
   align-items: center;
   padding: 0 16px;
   height: 64px;
-  color: ${props => props.$isDark ? 'white' : '#1677ff'};
-  background: ${props => props.$isDark ? '#111' : '#fff'};
+  color: ${props => props.$isDark ? 'white' : '#6BBEA9'};
+  background: ${props => props.$isDark ? '#1F2E2B' : '#fff'};
   overflow: hidden;
   white-space: nowrap;
+  
+  .logo-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
   
   .logo-text {
     margin-left: 12px;
@@ -60,8 +68,8 @@ const StyledHeader = styled(Header)`
   display: flex;
   align-items: center;
   padding: 0 16px;
-  background: ${props => props.$isDark ? '#111' : '#fff'};
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  background: ${props => props.$isDark ? '#1F2E2B' : '#fff'};
+  box-shadow: 0 1px 4px rgba(107, 190, 169, 0.1);
   z-index: 1;
   position: sticky;
   top: 0;
@@ -101,8 +109,9 @@ const StyledLayout = styled(Layout)`
 const ContentWrapper = styled.div`
   margin: 24px;
   padding: 24px;
-  background: ${props => props.$isDark ? '#1f1f1f' : '#fff'};
-  border-radius: 6px;
+  background: ${props => props.$isDark ? '#2A3B39' : '#fff'};
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(107, 190, 169, 0.1);
   min-height: 280px;
   
   @media (max-width: 768px) {
@@ -215,8 +224,8 @@ const MainLayout = () => {
   const sidebarContent = (
     <>
       <StyledLogo $collapsed={collapsed} $isDark={isDark}>
-        <AppstoreOutlined style={{ fontSize: 24 }} />
-        <span className="logo-text">SGMM</span>
+        <img src={logoImage} alt="Xe Nước Mía Tuấn" className="logo-image" />
+        <span className="logo-text">Xe Nước Mía</span>
       </StyledLogo>
       <Menu
         theme={isDark ? 'dark' : 'light'}

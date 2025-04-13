@@ -66,6 +66,7 @@ const MachineTab = () => {
       const filtered = machines.filter(
         machine => 
           machine.machine_id.toLowerCase().includes(value) || 
+          (machine.name && machine.name.toLowerCase().includes(value)) ||
           (machine.machine_type_name && machine.machine_type_name.toLowerCase().includes(value))
       );
       setFilteredMachines(filtered);
@@ -91,14 +92,27 @@ const MachineTab = () => {
         throw new Error(errorData.message || 'Không thể thêm máy mới');
       }
       
-      const newMachine = await response.json();
-      const updatedMachines = [...machines, newMachine.data];
+      const result = await response.json();
+      
+      if (!result.data) {
+        throw new Error('Không thể tạo máy mới');
+      }
+      
+      // Find the machine type name from machineTypes
+      const machineType = machineTypes.find(type => type.machine_type_id === machine.machine_type_id);
+      const newMachine = {
+        ...result.data,
+        machine_type_name: machineType ? machineType.name : ''
+      };
+      
+      const updatedMachines = [...machines, newMachine];
       setMachines(updatedMachines);
       setFilteredMachines(
         searchText ? 
           updatedMachines.filter(
             m => 
               m.machine_id.toLowerCase().includes(searchText) || 
+              (m.name && m.name.toLowerCase().includes(searchText)) ||
               (m.machine_type_name && m.machine_type_name.toLowerCase().includes(searchText))
           ) : 
           updatedMachines
@@ -139,6 +153,7 @@ const MachineTab = () => {
           updatedMachines.filter(
             m => 
               m.machine_id.toLowerCase().includes(searchText) || 
+              (m.name && m.name.toLowerCase().includes(searchText)) ||
               (m.machine_type_name && m.machine_type_name.toLowerCase().includes(searchText))
           ) : 
           updatedMachines
@@ -172,6 +187,7 @@ const MachineTab = () => {
           updatedMachines.filter(
             m => 
               m.machine_id.toLowerCase().includes(searchText) || 
+              (m.name && m.name.toLowerCase().includes(searchText)) ||
               (m.machine_type_name && m.machine_type_name.toLowerCase().includes(searchText))
           ) : 
           updatedMachines
@@ -213,7 +229,7 @@ const MachineTab = () => {
     <div>
       <Space style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <Input
-          placeholder="Tìm kiếm theo mã máy hoặc loại máy"
+          placeholder="Tìm kiếm theo mã máy, tên máy hoặc loại máy"
           prefix={<SearchOutlined />}
           onChange={handleSearch}
           style={{ width: 300 }}

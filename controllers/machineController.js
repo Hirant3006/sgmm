@@ -54,21 +54,13 @@ const machineController = {
   // Create a new machine
   createMachine: async (req, res) => {
     try {
-      const { machine_id, machine_type_id, price } = req.body;
+      const { machine_type_id, name, price } = req.body;
       
       // Validate request body
-      if (!machine_id || !machine_type_id) {
+      if (!machine_type_id || !name) {
         return res.status(400).json({
           success: false,
           message: 'Vui lòng nhập đầy đủ thông tin bắt buộc'
-        });
-      }
-      
-      // Validate machine_id format
-      if (!/^[a-zA-Z0-9]+$/.test(machine_id)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Mã máy chỉ được chứa chữ cái và số'
         });
       }
       
@@ -82,8 +74,8 @@ const machineController = {
       }
       
       const newMachine = await Machine.create({
-        machine_id,
         machine_type_id,
+        name,
         price: priceValue
       });
       
@@ -96,13 +88,6 @@ const machineController = {
       console.error('Error in createMachine:', error);
       
       // Handle specific errors
-      if (error.message.includes('Machine ID already exists')) {
-        return res.status(400).json({
-          success: false,
-          message: 'Mã máy đã tồn tại'
-        });
-      }
-      
       if (error.message.includes('Invalid machine type ID')) {
         return res.status(400).json({
           success: false,
@@ -122,13 +107,21 @@ const machineController = {
   updateMachine: async (req, res) => {
     try {
       const { id } = req.params;
-      const { machine_type_id, price } = req.body;
+      const { machine_type_id, name, price } = req.body;
       
       // Validate request body
-      if (!machine_type_id) {
+      if (!machine_type_id || !name) {
         return res.status(400).json({
           success: false,
           message: 'Vui lòng nhập đầy đủ thông tin bắt buộc'
+        });
+      }
+
+      // Validate name
+      if (name.length < 2 || name.length > 100) {
+        return res.status(400).json({
+          success: false,
+          message: 'Tên máy phải có độ dài từ 2-100 ký tự'
         });
       }
       
@@ -143,6 +136,7 @@ const machineController = {
       
       const updatedMachine = await Machine.update(id, {
         machine_type_id,
+        name,
         price: priceValue
       });
       

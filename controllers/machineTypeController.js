@@ -54,21 +54,13 @@ const machineTypeController = {
   // Create a new machine type
   createMachineType: async (req, res) => {
     try {
-      const { machine_type_id, name } = req.body;
+      const { name } = req.body;
       
       // Validate request body
-      if (!machine_type_id || !name) {
+      if (!name) {
         return res.status(400).json({
           success: false,
           message: 'Vui lòng nhập đầy đủ thông tin bắt buộc'
-        });
-      }
-      
-      // Validate machine_type_id format
-      if (!/^[a-zA-Z0-9]+$/.test(machine_type_id)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Mã loại máy chỉ được chứa chữ cái và số'
         });
       }
       
@@ -81,7 +73,6 @@ const machineTypeController = {
       }
       
       const newMachineType = await MachineType.create({
-        machine_type_id,
         name
       });
       
@@ -103,7 +94,7 @@ const machineTypeController = {
       
       return res.status(500).json({
         success: false,
-        message: 'Lỗi khi thêm loại máy mới',
+        message: 'Lỗi khi thêm loại máy',
         error: error.message
       });
     }
@@ -119,7 +110,7 @@ const machineTypeController = {
       if (!name) {
         return res.status(400).json({
           success: false,
-          message: 'Vui lòng nhập tên loại máy'
+          message: 'Vui lòng nhập đầy đủ thông tin bắt buộc'
         });
       }
       
@@ -131,9 +122,7 @@ const machineTypeController = {
         });
       }
       
-      const updatedMachineType = await MachineType.update(id, {
-        name
-      });
+      const updatedMachineType = await MachineType.update(id, { name });
       
       return res.status(200).json({
         success: true,
@@ -143,7 +132,6 @@ const machineTypeController = {
     } catch (error) {
       console.error('Error in updateMachineType:', error);
       
-      // Handle specific errors
       if (error.message.includes('Machine type not found')) {
         return res.status(404).json({
           success: false,
@@ -173,7 +161,6 @@ const machineTypeController = {
     } catch (error) {
       console.error('Error in deleteMachineType:', error);
       
-      // Handle specific errors
       if (error.message.includes('Machine type not found')) {
         return res.status(404).json({
           success: false,
@@ -181,10 +168,10 @@ const machineTypeController = {
         });
       }
       
-      if (error.message.includes('Cannot delete machine type that is being used')) {
+      if (error.message.includes('Cannot delete machine type that is being used by machines')) {
         return res.status(400).json({
           success: false,
-          message: 'Không thể xóa loại máy đang được sử dụng bởi máy móc'
+          message: 'Không thể xóa loại máy đang được sử dụng'
         });
       }
       

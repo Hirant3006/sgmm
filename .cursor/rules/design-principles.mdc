@@ -1,7 +1,7 @@
 ---
 description: 
-globs: *.jsx
-alwaysApply: false
+globs: 
+alwaysApply: true
 ---
 When executing tasks related to user interface design, you must strictly follow these core design principles and best practices:
 

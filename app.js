@@ -13,7 +13,7 @@ const userModel = require('./models/user');
 const db = require('./config/db');
 
 const app = express();
-const PORT = 3001;
+const PORT = 3002;
 
 // Middleware
 app.use(cors({
@@ -27,17 +27,32 @@ app.use(cookieParser());
 // Initialize database tables
 const initializeDatabase = async () => {
   try {
+    console.log('Initializing database...');
+    
+    // Drop all existing tables first
+    try {
+      await db.query('DROP TABLE IF EXISTS machines CASCADE');
+      await db.query('DROP TABLE IF EXISTS machine_subtypes CASCADE');
+      await db.query('DROP TABLE IF EXISTS machine_types CASCADE');
+      await db.query('DROP TABLE IF EXISTS users CASCADE');
+      console.log('All existing tables dropped');
+    } catch (dropError) {
+      console.error('Error dropping tables:', dropError);
+    }
+    
     // Create user tables
     await userModel.createUsersTable();
     console.log('User tables initialized');
     
-    // Create machine tables
+    // Create machine tables with empty data
     try {
-      const migrationPath = path.join(__dirname, 'migrations', 'create_machine_tables.sql');
+      const migrationPath = path.join(__dirname, 'migrations', 'create_empty_tables.sql');
       if (fs.existsSync(migrationPath)) {
         const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
         await db.query(migrationSQL);
-        console.log('Machine tables initialized');
+        console.log('Machine tables initialized with empty data');
+      } else {
+        console.error('Migration file not found:', migrationPath);
       }
     } catch (machineError) {
       console.error('Error initializing machine tables:', machineError);

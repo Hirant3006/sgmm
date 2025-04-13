@@ -30,11 +30,12 @@ const { Title, Text, Paragraph } = Typography;
 const StyledCard = styled(Card)`
   height: 100%;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(107, 190, 169, 0.1);
   transition: all 0.3s;
+  border: 1px solid ${props => props.$isDark ? '#374945' : '#E9F5F2'};
   
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 12px rgba(107, 190, 169, 0.2);
     transform: translateY(-2px);
   }
 `;
@@ -48,8 +49,12 @@ const QuickLinkCard = styled(StyledCard)`
   
   .card-icon {
     font-size: 28px;
-    color: #1677ff;
+    color: #6BBEA9;
     margin-bottom: 12px;
+  }
+  
+  &:hover .card-icon {
+    color: #5AA897;
   }
 `;
 
@@ -94,7 +99,7 @@ const Dashboard = () => {
             Xin chào, {user?.username || 'User'}
           </Title>
           <Paragraph type="secondary">
-            Đây là tổng quan về hệ thống quản lý máy móc của bạn
+            Đây là tổng quan về hệ thống quản lý Xe Nước Mía Tuấn
           </Paragraph>
         </Col>
         <Col xs={24} md={8} style={{ textAlign: 'right' }}>

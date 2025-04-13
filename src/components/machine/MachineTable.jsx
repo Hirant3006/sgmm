@@ -10,14 +10,21 @@ const MachineTable = ({ machines, onEdit, onDelete }) => {
       title: 'Mã Máy',
       dataIndex: 'machine_id',
       key: 'machine_id',
-      width: '20%',
+      width: '15%',
       sorter: (a, b) => a.machine_id.localeCompare(b.machine_id),
+    },
+    {
+      title: 'Tên Máy',
+      dataIndex: 'name',
+      key: 'name',
+      width: '25%',
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Loại Máy',
       dataIndex: 'machine_type_name',
       key: 'machine_type_name',
-      width: '30%',
+      width: '25%',
       sorter: (a, b) => a.machine_type_name.localeCompare(b.machine_type_name),
       render: (text, record) => (
         <span>{text}</span>
@@ -36,7 +43,7 @@ const MachineTable = ({ machines, onEdit, onDelete }) => {
     {
       title: 'Thao Tác',
       key: 'action',
-      width: '20%',
+      width: '15%',
       render: (_, record) => (
         <Space size="middle">
           <Button

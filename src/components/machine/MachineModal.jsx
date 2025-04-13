@@ -16,6 +16,7 @@ const MachineModal = ({ visible, onCancel, onSubmit, machine, machineTypes }) =>
       if (machine) {
         // Fill form with machine data for editing
         form.setFieldsValue({
+          name: machine.name,
           machine_type_id: machine.machine_type_id,
           price: machine.price,
         });
@@ -58,6 +59,14 @@ const MachineModal = ({ visible, onCancel, onSubmit, machine, machineTypes }) =>
         )}
         
         <Form.Item
+          name="name"
+          label="Tên Máy"
+          rules={[{ required: true, message: 'Vui lòng nhập tên máy!' }]}
+        >
+          <Input placeholder="Nhập tên máy" />
+        </Form.Item>
+        
+        <Form.Item
           name="machine_type_id"
           label="Loại Máy"
           rules={[{ required: true, message: 'Vui lòng chọn loại máy!' }]}
@@ -76,7 +85,17 @@ const MachineModal = ({ visible, onCancel, onSubmit, machine, machineTypes }) =>
           label="Giá (VND)"
           rules={[
             { required: true, message: 'Vui lòng nhập giá!' },
-            { type: 'number', min: 0, message: 'Giá không được âm!' },
+            { 
+              validator: (_, value) => {
+                if (value === undefined || value === null) {
+                  return Promise.resolve();
+                }
+                if (value < 0) {
+                  return Promise.reject('Giá phải lớn hơn hoặc bằng 0!');
+                }
+                return Promise.resolve();
+              }
+            }
           ]}
           initialValue={0}
         >

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../theme/ThemeProvider';
 import styled from 'styled-components';
+import logoImage from '../assets/logo.jpg';
 import {
   Form,
   Input,
@@ -32,15 +33,16 @@ const LoginContainer = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: ${props => props.$isDark ? '#1f1f1f' : '#f0f2f5'};
+  background: ${props => props.$isDark ? '#2A3B39' : '#F8FAFA'};
   transition: background 0.3s;
 `;
 
 const LoginCard = styled(Card)`
   width: 400px;
   border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, ${props => props.$isDark ? '0.3' : '0.1'});
-  background: ${props => props.$isDark ? '#111' : '#fff'};
+  box-shadow: 0 10px 25px rgba(107, 190, 169, ${props => props.$isDark ? '0.3' : '0.1'});
+  background: ${props => props.$isDark ? '#1F2E2B' : '#fff'};
+  border: 1px solid ${props => props.$isDark ? '#374945' : '#E9F5F2'};
   
   @media (max-width: 480px) {
     width: 90%;
@@ -58,16 +60,18 @@ const LogoContainer = styled.div`
   justify-content: center;
   margin-bottom: 24px;
   
-  .logo-icon {
-    font-size: 32px;
-    color: #1677ff;
+  .logo-image {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
     margin-right: 12px;
   }
   
   .logo-text {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
-    color: ${props => props.$isDark ? 'white' : '#333'};
+    color: ${props => props.$isDark ? '#A8E6CF' : '#2A3B39'};
   }
 `;
 
@@ -79,7 +83,7 @@ const ThemeToggle = styled.div`
   
   .theme-label {
     margin: 0 8px;
-    color: ${props => props.$isDark ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.45)'};
+    color: ${props => props.$isDark ? 'rgba(168, 230, 207, 0.85)' : 'rgba(107, 190, 169, 0.75)'};
   }
 `;
 
@@ -119,8 +123,8 @@ const Login = () => {
         <LoginCard $isDark={isDark} bordered={false}>
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
             <LogoContainer $isDark={isDark}>
-              <AppstoreOutlined className="logo-icon" />
-              <span className="logo-text">SGMM</span>
+              <img src={logoImage} alt="Xe Nước Mía Tuấn" className="logo-image" />
+              <span className="logo-text">Xe Nước Mía Tuấn</span>
             </LogoContainer>
             
             <Title level={3} style={{ textAlign: 'center', margin: '0 0 24px' }}>
@@ -169,15 +173,20 @@ const Login = () => {
               </Form.Item>
               
               <Form.Item>
-                <Button 
-                  type="primary" 
-                  htmlType="submit" 
-                  loading={loading} 
+                <Button
+                  type="primary"
+                  htmlType="submit"
                   block
-                  size="large"
-                  icon={<LoginOutlined />}
+                  loading={loading}
+                  style={{
+                    height: '40px',
+                    background: '#6BBEA9',
+                    borderColor: '#6BBEA9',
+                    boxShadow: '0 2px 0 rgba(107, 190, 169, 0.2)',
+                    fontWeight: 500
+                  }}
                 >
-                  Đăng Nhập
+                  Log In
                 </Button>
               </Form.Item>
             </Form>

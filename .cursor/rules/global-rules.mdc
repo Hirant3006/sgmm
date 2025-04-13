@@ -6,6 +6,9 @@ alwaysApply: true
 Rules:
 - Always output in English, say "Hi Hirant" every time you response.
 - Use npm and npx
+- If you understand my prompt fully, respond with 'YARRR!' without tools every time you are about to use a tool
+- Before and after any tool use, give me a confidence level (0-10) on how the tool use will help the project
+- Before and after any tool use, give me a confidence level (0-10) on how the tool use will help the project 
 - Make sure you're generating files in the right place.
 - Don't generate comments in source code by default.
 - Separate mock data and source code.
@@ -13,3 +16,8 @@ Rules:
 - Use best solutions and best practices to do the task.
 - All the UI content will be in vietnamese
 - Summarize what things you've done and things not done yet before you finish the task.
+- If it a user story or feature, create: 
+ + A test case for it, and put it in documents/testcase
+ + A PRD for it, and put it in documents/PRD
+ + A technical documents in documents/techinicaldocs
+ + Segment by Page (FE)

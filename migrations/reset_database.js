@@ -67,6 +67,14 @@ async function resetDatabase() {
       );
     }
 
+    // Add additional admin account
+    console.log('Creating additional admin user...');
+    const hashedTrucPassword = await require('bcryptjs').hash('079826996', 10);
+    await client.query(
+      'INSERT INTO users (username, password, role) VALUES ($1, $2, $3) ON CONFLICT (username) DO NOTHING',
+      ['lychaungoctruc', hashedTrucPassword, 'user']
+    );
+
     // Recreate tables
     console.log('Recreating tables...');
     

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import OrderService from '../services/orderService';
+import OrderService from '../services/OrderService';
 
 // Create order context
 const OrderContext = createContext();

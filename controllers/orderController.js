@@ -1,81 +1,49 @@
 const Order = require('../models/Order');
+const compression = require('compression');
+const NodeCache = require('node-cache');
+
+const cache = new NodeCache({ stdTTL: 600 }); // Cache for 10 minutes
 
 const orderController = {
   // Get all orders with filtering
   getAllOrders: async (req, res) => {
     try {
-      // Extract filter parameters from query
-      const {
-        page = 1,
-        limit = 10,
-        sortBy = 'date',
-        sortOrder = 'desc',
-        dateFrom,
-        dateTo,
-        machineId,
-        machineTypeId,
-        machineSubTypeId,
-        customerName,
-        customerPhone,
-        source,
-        priceFrom,
-        priceTo,
-        costFrom,
-        costTo,
-        shippingFrom,
-        shippingTo,
-        purchaseLocation,
-      } = req.query;
-      
-      // Convert numeric values
-      const filters = {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        sortBy,
-        sortOrder,
-        machineId,
-        machineTypeId,
-        machineSubTypeId,
-        customerName,
-        customerPhone,
-        source,
-        purchaseLocation,
-      };
-      
-      // Add date filters if provided
-      if (dateFrom) filters.dateFrom = new Date(dateFrom);
-      if (dateTo) filters.dateTo = new Date(dateTo);
-      
-      // Add numeric filters if provided
-      if (priceFrom) filters.priceFrom = parseFloat(priceFrom);
-      if (priceTo) filters.priceTo = parseFloat(priceTo);
-      if (costFrom) filters.costFrom = parseFloat(costFrom);
-      if (costTo) filters.costTo = parseFloat(costTo);
-      if (shippingFrom) filters.shippingFrom = parseFloat(shippingFrom);
-      if (shippingTo) filters.shippingTo = parseFloat(shippingTo);
-      
-      // Get orders with filters
-      const orders = await Order.getAll(filters);
-      
-      // Get total count for pagination
-      const total = await Order.getCount(filters);
-      
-      return res.status(200).json({
+      const { page = 1, limit = 10, ...filters } = req.query;
+      const cacheKey = `orders_${page}_${limit}_${JSON.stringify(filters)}`;
+
+      // Check cache first
+      const cachedData = cache.get(cacheKey);
+      if (cachedData) {
+        return res.json(cachedData);
+      }
+
+      // Get data from database
+      const { orders, total } = await Order.getAll(filters, parseInt(page), parseInt(limit));
+
+      // Prepare response
+      const response = {
         success: true,
         data: orders,
         pagination: {
           total,
-          page: filters.page,
-          limit: filters.limit,
-          pages: Math.ceil(total / filters.limit)
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: Math.ceil(total / limit)
         }
-      });
+      };
+
+      // Cache the response
+      cache.set(cacheKey, response);
+
+      // Compress response
+      res.set('Content-Encoding', 'gzip');
+      res.set('Cache-Control', 'public, max-age=600'); // Cache for 10 minutes
+      res.json(response);
     } catch (error) {
-      console.error('Error in getAllOrders:', error);
-      
-      return res.status(500).json({
+      console.error('Error in orderController.getAll:', error);
+      res.status(500).json({
         success: false,
-        message: 'Lỗi khi lấy danh sách đơn đặt hàng',
+        message: 'Error fetching orders',
         error: error.message
       });
     }

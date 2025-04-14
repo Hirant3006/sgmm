@@ -1,119 +1,67 @@
-const db = require('../config/db');
+const db = require('../config/database');
+const { format } = require('date-fns');
 
 class Order {
-  static async getAll(filters = {}) {
-    let query = `
-      SELECT o.id, o.date, o.customer_name, o.customer_phone, o.source,
-             o.price, o.cost_of_good, o.shipping_cost, o.purchase_location, o.notes,
-             o.created_at, o.updated_at,
-             m.machine_id, m.name as machine_name,
-             mt.machine_type_id, mt.name as machine_type_name,
-             mst.machine_subtype_id, mst.name as machine_subtype_name
-      FROM orders o
-      LEFT JOIN machines m ON o.machine_id = m.machine_id
-      LEFT JOIN machine_types mt ON o.machine_type_id = mt.machine_type_id
-      LEFT JOIN machine_subtypes mst ON o.machine_subtype_id = mst.machine_subtype_id
-      WHERE 1=1
-    `;
-    
-    const params = [];
-    
-    // Apply filters
-    if (filters.dateFrom) {
-      params.push(filters.dateFrom);
-      query += ` AND o.date >= $${params.length}`;
+  static async getAll(filters = {}, page = 1, limit = 10) {
+    const offset = (page - 1) * limit;
+    const whereConditions = [];
+    const queryParams = [];
+
+    // Build WHERE clause dynamically
+    if (filters.startDate) {
+      whereConditions.push('o.date >= $1');
+      queryParams.push(filters.startDate);
     }
-    
-    if (filters.dateTo) {
-      params.push(filters.dateTo);
-      query += ` AND o.date <= $${params.length}`;
+    if (filters.endDate) {
+      whereConditions.push('o.date <= $2');
+      queryParams.push(filters.endDate);
     }
-    
     if (filters.machineId) {
-      params.push(filters.machineId);
-      query += ` AND o.machine_id = $${params.length}`;
+      whereConditions.push('o.machine_id = $3');
+      queryParams.push(filters.machineId);
     }
-    
-    if (filters.machineTypeId) {
-      params.push(filters.machineTypeId);
-      query += ` AND o.machine_type_id = $${params.length}`;
-    }
-    
-    if (filters.machineSubTypeId) {
-      params.push(filters.machineSubTypeId);
-      query += ` AND o.machine_subtype_id = $${params.length}`;
-    }
-    
     if (filters.customerName) {
-      params.push(`%${filters.customerName}%`);
-      query += ` AND o.customer_name ILIKE $${params.length}`;
+      whereConditions.push('o.customer_name ILIKE $4');
+      queryParams.push(`%${filters.customerName}%`);
     }
-    
     if (filters.customerPhone) {
-      params.push(`%${filters.customerPhone}%`);
-      query += ` AND o.customer_phone ILIKE $${params.length}`;
+      whereConditions.push('o.customer_phone ILIKE $5');
+      queryParams.push(`%${filters.customerPhone}%`);
     }
-    
-    if (filters.source) {
-      params.push(`%${filters.source}%`);
-      query += ` AND o.source ILIKE $${params.length}`;
-    }
-    
-    if (filters.priceFrom) {
-      params.push(filters.priceFrom);
-      query += ` AND o.price >= $${params.length}`;
-    }
-    
-    if (filters.priceTo) {
-      params.push(filters.priceTo);
-      query += ` AND o.price <= $${params.length}`;
-    }
-    
-    if (filters.costFrom) {
-      params.push(filters.costFrom);
-      query += ` AND o.cost_of_good >= $${params.length}`;
-    }
-    
-    if (filters.costTo) {
-      params.push(filters.costTo);
-      query += ` AND o.cost_of_good <= $${params.length}`;
-    }
-    
-    if (filters.shippingFrom) {
-      params.push(filters.shippingFrom);
-      query += ` AND o.shipping_cost >= $${params.length}`;
-    }
-    
-    if (filters.shippingTo) {
-      params.push(filters.shippingTo);
-      query += ` AND o.shipping_cost <= $${params.length}`;
-    }
-    
-    if (filters.purchaseLocation) {
-      params.push(`%${filters.purchaseLocation}%`);
-      query += ` AND o.purchase_location ILIKE $${params.length}`;
-    }
-    
-    // Add ordering
-    const sortField = filters.sortBy || 'date';
-    const sortOrder = filters.sortOrder === 'asc' ? 'ASC' : 'DESC';
-    
-    query += ` ORDER BY o.${sortField} ${sortOrder}`;
-    
-    // Add pagination
-    if (filters.page && filters.limit) {
-      const offset = (filters.page - 1) * filters.limit;
-      params.push(filters.limit);
-      params.push(offset);
-      query += ` LIMIT $${params.length - 1} OFFSET $${params.length}`;
-    }
-    
-    try {
-      const { rows } = await db.query(query, params);
-      return rows;
-    } catch (error) {
-      throw new Error(`Error getting orders: ${error.message}`);
-    }
+
+    const whereClause = whereConditions.length > 0 
+      ? `WHERE ${whereConditions.join(' AND ')}` 
+      : '';
+
+    // Use materialized CTE for better performance
+    const query = `
+      WITH filtered_orders AS MATERIALIZED (
+        SELECT 
+          o.*,
+          m.name as machine_name,
+          mt.name as machine_type_name,
+          mst.name as machine_subtype_name,
+          COUNT(*) OVER() as total_count
+        FROM orders o
+        LEFT JOIN machines m ON o.machine_id = m.machine_id
+        LEFT JOIN machine_types mt ON m.machine_type_id = mt.machine_type_id
+        LEFT JOIN machine_subtypes mst ON m.machine_subtype_id = mst.machine_subtype_id
+        ${whereClause}
+        ORDER BY o.date DESC
+        LIMIT $${queryParams.length + 1}
+        OFFSET $${queryParams.length + 2}
+      )
+      SELECT 
+        *,
+        (SELECT total_count FROM filtered_orders LIMIT 1) as total
+      FROM filtered_orders
+    `;
+
+    const result = await db.query(query, [...queryParams, limit, offset]);
+    return {
+      orders: result.rows,
+      total: result.rows[0]?.total || 0
+    };
   }
 
   static async getCount(filters = {}) {

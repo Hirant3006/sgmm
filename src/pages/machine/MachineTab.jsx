@@ -3,6 +3,7 @@ import { Button, Space, message, Spin, Input } from 'antd';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import MachineTable from '../../components/machine/MachineTable';
 import MachineModal from '../../components/machine/MachineModal';
+import MachineService from '../../services/machineService';
 
 const MachineTab = () => {
   const [machines, setMachines] = useState([]);
@@ -19,31 +20,15 @@ const MachineTab = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Fetch machines
-        const machinesResponse = await fetch('/api/machines', {
-          credentials: 'include'
-        });
         
-        if (!machinesResponse.ok) {
-          throw new Error('Không thể tải dữ liệu máy móc');
-        }
-        
-        const machinesData = await machinesResponse.json();
-        const machinesArray = machinesData.data || [];
+        // Fetch machines using MachineService
+        const machinesArray = await MachineService.getMachines();
         setMachines(machinesArray);
         setFilteredMachines(machinesArray);
         
-        // Fetch machine types for dropdown
-        const machineTypesResponse = await fetch('/api/machine-types', {
-          credentials: 'include'
-        });
-        
-        if (!machineTypesResponse.ok) {
-          throw new Error('Không thể tải dữ liệu loại máy');
-        }
-        
-        const machineTypesData = await machineTypesResponse.json();
-        setMachineTypes(machineTypesData.data || []);
+        // Fetch machine types for dropdown using MachineService
+        const machineTypesArray = await MachineService.getMachineTypes();
+        setMachineTypes(machineTypesArray);
         
         setError(null);
       } catch (err) {
@@ -78,30 +63,13 @@ const MachineTab = () => {
   // Add a new machine with auto-generated ID
   const addMachine = async (machine) => {
     try {
-      const response = await fetch('/api/machines', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(machine),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Không thể thêm máy mới');
-      }
-      
-      const result = await response.json();
-      
-      if (!result.data) {
-        throw new Error('Không thể tạo máy mới');
-      }
+      // Create machine using MachineService
+      const newMachineData = await MachineService.createMachine(machine);
       
       // Find the machine type name from machineTypes
       const machineType = machineTypes.find(type => type.machine_type_id === machine.machine_type_id);
       const newMachine = {
-        ...result.data,
+        ...newMachineData,
         machine_type_name: machineType ? machineType.name : ''
       };
       
@@ -127,24 +95,11 @@ const MachineTab = () => {
   // Update an existing machine
   const updateMachine = async (machine) => {
     try {
-      const response = await fetch(`/api/machines/${currentMachine.machine_id}`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(machine),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Không thể cập nhật máy');
-      }
-      
-      const updatedMachine = await response.json();
+      // Update machine using MachineService
+      const updatedMachineData = await MachineService.updateMachine(currentMachine.machine_id, machine);
       
       const updatedMachines = machines.map((item) => 
-        item.machine_id === currentMachine.machine_id ? updatedMachine.data : item
+        item.machine_id === currentMachine.machine_id ? updatedMachineData : item
       );
       
       setMachines(updatedMachines);
@@ -170,15 +125,8 @@ const MachineTab = () => {
   // Delete a machine
   const deleteMachine = async (machineId) => {
     try {
-      const response = await fetch(`/api/machines/${machineId}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Không thể xóa máy');
-      }
+      // Delete machine using MachineService
+      await MachineService.deleteMachine(machineId);
       
       const updatedMachines = machines.filter((machine) => machine.machine_id !== machineId);
       setMachines(updatedMachines);
@@ -248,21 +196,28 @@ const MachineTab = () => {
         <div style={{ textAlign: 'center', padding: '50px' }}>
           <Spin size="large" />
         </div>
+      ) : error ? (
+        <div style={{ color: 'red', padding: '20px' }}>
+          {error}
+        </div>
       ) : (
         <MachineTable 
           machines={filteredMachines} 
           onEdit={editMachine} 
-          onDelete={deleteMachine} 
+          onDelete={deleteMachine}
         />
       )}
       
-      <MachineModal
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        onSubmit={handleSubmit}
-        machine={currentMachine}
-        machineTypes={machineTypes}
-      />
+      {isModalVisible && (
+        <MachineModal
+          visible={isModalVisible}
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+          machine={currentMachine}
+          machineTypes={machineTypes}
+          title={currentMachine ? 'Chỉnh Sửa Máy' : 'Thêm Máy Mới'}
+        />
+      )}
     </div>
   );
 };

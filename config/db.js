@@ -1,2 +1,3 @@
 // Re-export the database module
-module.exports = require('./database'); 
+const database = require('./database');
+module.exports = database; 

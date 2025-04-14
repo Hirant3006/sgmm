@@ -8,7 +8,6 @@ Rules:
 - Use npm and npx
 - If you understand my prompt fully, respond with 'YARRR!' without tools every time you are about to use a tool
 - Before and after any tool use, give me a confidence level (0-10) on how the tool use will help the project
-- Before and after any tool use, give me a confidence level (0-10) on how the tool use will help the project 
 - Make sure you're generating files in the right place.
 - Don't generate comments in source code by default.
 - Separate mock data and source code.
@@ -17,7 +16,8 @@ Rules:
 - All the UI content will be in vietnamese
 - Summarize what things you've done and things not done yet before you finish the task.
 - If it a user story or feature, create: 
- + A test case for it, and put it in documents/testcase
+ + A test case for it, and put it in documents/testcases
  + A PRD for it, and put it in documents/PRD
  + A technical documents in documents/techinicaldocs
  + Segment by Page (FE)
+ + Use camel case for naming the file 

@@ -7,6 +7,8 @@ import MainLayout from './components/layouts/MainLayout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import MachineManagementPage from './pages/machine/MachineManagementPage';
+import OrderManagementPage from './pages/order/OrderManagementPage';
+import DataMigrationPage from './pages/migration/DataMigrationPage';
 import PageNotFound from './pages/PageNotFound';
 import './index.css';
 
@@ -24,6 +26,8 @@ function App() {
               <Route element={<MainLayout />}>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/machines/*" element={<MachineManagementPage />} />
+                <Route path="/orders/*" element={<OrderManagementPage />} />
+                <Route path="/migration" element={<DataMigrationPage />} />
                 <Route path="/settings" element={<div>Settings Page - Coming Soon</div>} />
                 <Route path="/profile" element={<div>Profile Page - Coming Soon</div>} />
               </Route>

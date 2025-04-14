@@ -54,10 +54,10 @@ const machineController = {
   // Create a new machine
   createMachine: async (req, res) => {
     try {
-      const { machine_type_id, name, price } = req.body;
+      const { machine_type_id, machine_subtype_id, name, price } = req.body;
       
       // Validate request body
-      if (!machine_type_id || !name) {
+      if (!machine_type_id || !machine_subtype_id || !name) {
         return res.status(400).json({
           success: false,
           message: 'Vui lòng nhập đầy đủ thông tin bắt buộc'
@@ -75,6 +75,7 @@ const machineController = {
       
       const newMachine = await Machine.create({
         machine_type_id,
+        machine_subtype_id,
         name,
         price: priceValue
       });
@@ -88,10 +89,10 @@ const machineController = {
       console.error('Error in createMachine:', error);
       
       // Handle specific errors
-      if (error.message.includes('Invalid machine type ID')) {
+      if (error.message.includes('Invalid machine type ID') || error.message.includes('Invalid machine subtype ID')) {
         return res.status(400).json({
           success: false,
-          message: 'Loại máy không hợp lệ'
+          message: 'Loại máy hoặc loại máy con không hợp lệ'
         });
       }
       
@@ -107,10 +108,10 @@ const machineController = {
   updateMachine: async (req, res) => {
     try {
       const { id } = req.params;
-      const { machine_type_id, name, price } = req.body;
+      const { machine_type_id, machine_subtype_id, name, price } = req.body;
       
       // Validate request body
-      if (!machine_type_id || !name) {
+      if (!machine_type_id || !machine_subtype_id || !name) {
         return res.status(400).json({
           success: false,
           message: 'Vui lòng nhập đầy đủ thông tin bắt buộc'
@@ -136,6 +137,7 @@ const machineController = {
       
       const updatedMachine = await Machine.update(id, {
         machine_type_id,
+        machine_subtype_id,
         name,
         price: priceValue
       });
@@ -156,10 +158,10 @@ const machineController = {
         });
       }
       
-      if (error.message.includes('Invalid machine type ID')) {
+      if (error.message.includes('Invalid machine type ID') || error.message.includes('Invalid machine subtype ID')) {
         return res.status(400).json({
           success: false,
-          message: 'Loại máy không hợp lệ'
+          message: 'Loại máy hoặc loại máy con không hợp lệ'
         });
       }
       

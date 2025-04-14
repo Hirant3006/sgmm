@@ -28,9 +28,13 @@ const login = async (req, res) => {
       });
     }
     
-    // Create JWT token
+    // Create JWT token with role
     const token = jwt.sign(
-      { id: user.id, username: user.username },
+      { 
+        id: user.id, 
+        username: user.username,
+        role: user.role || 'user' // Include role in token, default to 'user' if not set
+      },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );
@@ -48,7 +52,8 @@ const login = async (req, res) => {
       message: 'Login successful',
       user: {
         id: user.id,
-        username: user.username
+        username: user.username,
+        role: user.role || 'user'
       }
     });
   } catch (error) {

@@ -29,7 +29,8 @@ import {
   AppstoreOutlined,
   ToolOutlined,
   BulbOutlined,
-  QuestionCircleOutlined
+  QuestionCircleOutlined,
+  ShoppingCartOutlined
 } from '@ant-design/icons';
 import styled from 'styled-components';
 
@@ -170,6 +171,19 @@ const MainLayout = () => {
       label: 'Quản Lý Máy Móc',
       path: '/machines',
     },
+    {
+      key: 'orders',
+      icon: <ShoppingCartOutlined />,
+      label: 'Quản Lý Đơn Hàng',
+      path: '/orders',
+    },
+    // Only show migration option for admin users
+    ...(user?.role === 'admin' ? [{
+      key: 'migration',
+      icon: <AppstoreOutlined />,
+      label: 'Quản Lý Dữ Liệu',
+      path: '/migration',
+    }] : []),
     {
       key: 'settings',
       icon: <SettingOutlined />,

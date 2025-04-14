@@ -186,7 +186,7 @@ const Login = () => {
                     fontWeight: 500
                   }}
                 >
-                  Log In
+                  Đăng Nhập
                 </Button>
               </Form.Item>
             </Form>

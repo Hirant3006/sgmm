@@ -1,10 +1,45 @@
 -- Create machine_types table
 CREATE TABLE IF NOT EXISTS machine_types (
     machine_type_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Create machines table
+CREATE TABLE IF NOT EXISTS machines (
+    id SERIAL PRIMARY KEY,
+    machine_id VARCHAR(10) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    machine_type_id INTEGER REFERENCES machine_types(machine_type_id),
+    machine_subtype_id VARCHAR(10) REFERENCES machine_subtypes(machine_subtype_id),
+    price NUMERIC(10, 2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create sequence for machine_id
+CREATE SEQUENCE IF NOT EXISTS machine_id_seq;
+
+-- Create function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create triggers for updated_at
+CREATE TRIGGER update_machine_types_updated_at
+BEFORE UPDATE ON machine_types
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_machines_updated_at
+BEFORE UPDATE ON machines
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
 
 -- Create sequence for machine_subtypes
 CREATE SEQUENCE IF NOT EXISTS machine_subtypes_id_seq;
@@ -39,17 +74,6 @@ CREATE TRIGGER generate_machine_subtype_id_trigger
     FOR EACH ROW
     EXECUTE FUNCTION generate_machine_subtype_id();
 
--- Create machines table with foreign key to machine_types
-CREATE TABLE IF NOT EXISTS machines (
-    id SERIAL,
-    machine_id VARCHAR(10) PRIMARY KEY,
-    machine_type_id INTEGER REFERENCES machine_types(machine_type_id),
-    name VARCHAR(100) NOT NULL,
-    price DECIMAL(15,2) DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Create function to generate machine_id
 CREATE OR REPLACE FUNCTION generate_machine_id()
 RETURNS TRIGGER AS $$
@@ -70,37 +94,3 @@ CREATE TRIGGER generate_machine_id_trigger
     BEFORE INSERT ON machines
     FOR EACH ROW
     EXECUTE FUNCTION generate_machine_id();
-
--- Insert sample machine types if not exists
-INSERT INTO machine_types (name) 
-VALUES 
-    ('Máy in'),
-    ('Máy scan'),
-    ('Máy photocopy')
-ON CONFLICT (machine_type_id) DO NOTHING;
-
--- Add sample data for machine_subtypes
-INSERT INTO machine_subtypes (name) 
-VALUES 
-    ('Máy in laser'),
-    ('Máy in phun'),
-    ('Máy scan phẳng'),
-    ('Máy scan đa chức năng'),
-    ('Máy photocopy màu'),
-    ('Máy photocopy đen trắng');
-
--- Add sample data for machines
-INSERT INTO machines (machine_type_id, name, price)
-SELECT 
-    mt.machine_type_id,
-    'HP LaserJet Pro M404dn',
-    15000000
-FROM machine_types mt 
-WHERE mt.name = 'Máy in'
-UNION ALL
-SELECT 
-    mt.machine_type_id,
-    'Canon PIXMA TS8270',
-    8000000
-FROM machine_types mt 
-WHERE mt.name = 'Máy in'; 

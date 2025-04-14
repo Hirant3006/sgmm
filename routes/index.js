@@ -6,6 +6,8 @@ const authRoutes = require('./auth');
 const machineRoutes = require('./machineRoutes');
 const machineTypeRoutes = require('./machineTypeRoutes');
 const machineSubTypeRoutes = require('./machineSubTypeRoutes');
+const orderRoutes = require('./orderRoutes');
+const migrationRoutes = require('./migrationRoutes');
 
 // Import auth middleware
 const authMiddleware = require('../middleware/auth');
@@ -22,5 +24,7 @@ router.use('/auth', authRoutes);
 router.use('/machines', machineRoutes);
 router.use('/machine-types', machineTypeRoutes);
 router.use('/machine-subtypes', machineSubTypeRoutes);
+router.use('/orders', orderRoutes);
+router.use('/migration', migrationRoutes);
 
 module.exports = router; 

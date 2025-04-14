@@ -3,9 +3,17 @@ const db = require('../config/db');
 class Machine {
   static async getAll() {
     const query = `
-      SELECT m.machine_id, m.name, m.machine_type_id, m.price, mt.name as machine_type_name
+      SELECT 
+        m.machine_id, 
+        m.name, 
+        m.machine_type_id, 
+        m.machine_subtype_id,
+        m.price, 
+        mt.name as machine_type_name,
+        mst.name as machine_subtype_name
       FROM machines m
       LEFT JOIN machine_types mt ON m.machine_type_id = mt.machine_type_id
+      LEFT JOIN machine_subtypes mst ON m.machine_subtype_id = mst.machine_subtype_id
       ORDER BY m.machine_id
     `;
     
@@ -19,9 +27,17 @@ class Machine {
 
   static async getById(machineId) {
     const query = `
-      SELECT m.machine_id, m.name, m.machine_type_id, m.price, mt.name as machine_type_name
+      SELECT 
+        m.machine_id, 
+        m.name, 
+        m.machine_type_id, 
+        m.machine_subtype_id,
+        m.price, 
+        mt.name as machine_type_name,
+        mst.name as machine_subtype_name
       FROM machines m
       LEFT JOIN machine_types mt ON m.machine_type_id = mt.machine_type_id
+      LEFT JOIN machine_subtypes mst ON m.machine_subtype_id = mst.machine_subtype_id
       WHERE m.machine_id = $1
     `;
     
@@ -34,7 +50,7 @@ class Machine {
   }
 
   static async create(machineData) {
-    const { machine_type_id, name, price } = machineData;
+    const { machine_type_id, machine_subtype_id, name, price } = machineData;
     
     // First, get the next id value
     const getIdQuery = `
@@ -44,18 +60,21 @@ class Machine {
     // Then insert with the generated machine_id
     const insertQuery = `
       WITH inserted_machine AS (
-        INSERT INTO machines (machine_id, machine_type_id, name, price)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO machines (machine_id, machine_type_id, machine_subtype_id, name, price)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING *
       )
       SELECT 
         m.machine_id,
         m.name,
         m.machine_type_id,
+        m.machine_subtype_id,
         m.price,
-        mt.name as machine_type_name
+        mt.name as machine_type_name,
+        mst.name as machine_subtype_name
       FROM inserted_machine m
       LEFT JOIN machine_types mt ON m.machine_type_id = mt.machine_type_id
+      LEFT JOIN machine_subtypes mst ON m.machine_subtype_id = mst.machine_subtype_id
     `;
     
     try {
@@ -67,7 +86,7 @@ class Machine {
       const machineId = 'M' + String(nextId).padStart(3, '0');
       
       // Insert the machine with the generated machine_id
-      const { rows } = await db.query(insertQuery, [machineId, machine_type_id, name, price]);
+      const { rows } = await db.query(insertQuery, [machineId, machine_type_id, machine_subtype_id, name, price]);
       
       if (!rows[0]) {
         throw new Error('Failed to create machine');
@@ -76,23 +95,26 @@ class Machine {
       return rows[0];
     } catch (error) {
       if (error.code === '23503') { // Foreign key violation in PostgreSQL
-        throw new Error('Invalid machine type ID');
+        throw new Error('Invalid machine type ID or machine subtype ID');
       }
       throw new Error(`Error creating machine: ${error.message}`);
     }
   }
 
   static async update(machineId, machine) {
-    const { machine_type_id, name, price } = machine;
+    const { machine_type_id, machine_subtype_id, name, price } = machine;
     
     // Check if machine_type_id exists
     const checkTypeQuery = 'SELECT 1 FROM machine_types WHERE machine_type_id = $1';
     
+    // Check if machine_subtype_id exists
+    const checkSubtypeQuery = 'SELECT 1 FROM machine_subtypes WHERE machine_subtype_id = $1';
+    
     // Update query
     const updateQuery = `
       UPDATE machines
-      SET machine_type_id = $1, name = $2, price = $3, updated_at = CURRENT_TIMESTAMP
-      WHERE machine_id = $4
+      SET machine_type_id = $1, machine_subtype_id = $2, name = $3, price = $4, updated_at = CURRENT_TIMESTAMP
+      WHERE machine_id = $5
       RETURNING *
     `;
     
@@ -103,8 +125,14 @@ class Machine {
         throw new Error('Invalid machine type ID');
       }
       
+      // Verify machine subtype exists
+      const subtypeResult = await db.query(checkSubtypeQuery, [machine_subtype_id]);
+      if (subtypeResult.rowCount === 0) {
+        throw new Error('Invalid machine subtype ID');
+      }
+      
       // Update machine
-      const result = await db.query(updateQuery, [machine_type_id, name, price, machineId]);
+      const result = await db.query(updateQuery, [machine_type_id, machine_subtype_id, name, price, machineId]);
       
       if (result.rowCount === 0) {
         throw new Error('Machine not found');
@@ -114,7 +142,7 @@ class Machine {
       return this.getById(machineId);
     } catch (error) {
       if (error.code === '23503') { // Foreign key violation
-        throw new Error('Invalid machine type ID');
+        throw new Error('Invalid machine type ID or machine subtype ID');
       }
       throw new Error(`Error updating machine: ${error.message}`);
     }

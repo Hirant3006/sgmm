@@ -19,10 +19,11 @@ const authenticate = (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, JWT_SECRET);
     
-    // Add user data to request object
+    // Add user data to request object, including role
     req.user = {
       id: decoded.id,
-      username: decoded.username
+      username: decoded.username,
+      role: decoded.role || 'user' // Include role from token, default to 'user' if not set
     };
     
     next();

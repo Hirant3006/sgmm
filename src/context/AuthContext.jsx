@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import AuthService from '../services/authService';
 
 // Create the auth context
 const AuthContext = createContext();
@@ -13,18 +14,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await fetch('/api/auth/status', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
+        const result = await AuthService.checkAuthStatus();
         
-        const data = await response.json();
-        
-        if (response.ok && data.success) {
-          setUser(data.user);
+        if (result.success) {
+          setUser(result.user);
         } else {
           setUser(null);
         }
@@ -45,28 +38,19 @@ export const AuthProvider = ({ children }) => {
       setError(null);
       setLoading(true);
       
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, password })
-      });
+      const result = await AuthService.login(username, password);
       
-      const data = await response.json();
-      
-      if (response.ok && data.success) {
-        setUser(data.user);
+      if (result.success) {
+        setUser(result.user);
         return { success: true };
       } else {
-        setError(data.message || 'Login failed');
-        return { success: false, message: data.message };
+        setError(result.message || 'Đăng nhập thất bại');
+        return { success: false, message: result.message };
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('Failed to connect to server. Please try again.');
-      return { success: false, message: 'Server connection error' };
+      setError('Lỗi kết nối đến server. Vui lòng thử lại sau.');
+      return { success: false, message: 'Lỗi kết nối đến server' };
     } finally {
       setLoading(false);
     }
@@ -77,26 +61,18 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const result = await AuthService.logout();
       
-      const data = await response.json();
-      
-      if (response.ok && data.success) {
+      if (result.success) {
         setUser(null);
         return { success: true };
       } else {
-        console.error('Logout failed:', data.message);
-        return { success: false };
+        console.error('Logout failed:', result.message);
+        return { success: false, message: result.message };
       }
     } catch (err) {
       console.error('Logout error:', err);
-      return { success: false };
+      return { success: false, message: 'Lỗi kết nối đến server' };
     } finally {
       setLoading(false);
     }

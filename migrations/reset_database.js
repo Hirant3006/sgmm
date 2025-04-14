@@ -1,7 +1,8 @@
-require('dotenv').config();
+require('dotenv').config({ path: '.env.production' });
 const db = require('../config/database');
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcryptjs');
 
 async function resetDatabase() {
   const client = await db.getClient();
@@ -15,11 +16,37 @@ async function resetDatabase() {
     // Disable foreign key constraints temporarily
     await client.query('SET CONSTRAINTS ALL DEFERRED');
     
-    // Backup admin user if exists
-    const adminUser = await client.query(
-      'SELECT * FROM users WHERE username = $1',
-      ['admin']
-    );
+    // Check if users table exists
+    const userTableExists = await client.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public'
+        AND table_name = 'users'
+      );
+    `);
+    
+    let adminUser = { rows: [] };
+    
+    if (userTableExists.rows[0].exists) {
+      // Backup admin user if exists
+      adminUser = await client.query(
+        'SELECT * FROM users WHERE username = $1',
+        ['admin']
+      );
+    } else {
+      // Create users table if it doesn't exist
+      console.log('Creating users table...');
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          username VARCHAR(100) UNIQUE NOT NULL,
+          password VARCHAR(255) NOT NULL,
+          role VARCHAR(50) NOT NULL DEFAULT 'user',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+    }
     
     // Drop all tables except users
     const tables = [
@@ -60,7 +87,7 @@ async function resetDatabase() {
       await client.query('DELETE FROM users WHERE username != $1', ['admin']);
     } else {
       console.log('Creating default admin user...');
-      const hashedPassword = await require('bcryptjs').hash('admin', 10);
+      const hashedPassword = await bcrypt.hash('admin', 10);
       await client.query(
         'INSERT INTO users (username, password, role) VALUES ($1, $2, $3)',
         ['admin', hashedPassword, 'admin']
@@ -69,7 +96,7 @@ async function resetDatabase() {
 
     // Add additional admin account
     console.log('Creating additional admin user...');
-    const hashedTrucPassword = await require('bcryptjs').hash('079826996', 10);
+    const hashedTrucPassword = await bcrypt.hash('079826996', 10);
     await client.query(
       'INSERT INTO users (username, password, role) VALUES ($1, $2, $3) ON CONFLICT (username) DO NOTHING',
       ['lychaungoctruc', hashedTrucPassword, 'user']

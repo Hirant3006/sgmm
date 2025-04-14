@@ -195,17 +195,6 @@ const Login = () => {
               <Text type="secondary">Thông tin đăng nhập mẫu</Text>
             </Divider>
             
-            <Flex justify="center" gap="middle">
-              <Space direction="vertical" size={0} align="center">
-                <Text type="secondary" strong>Tên đăng nhập</Text>
-                <Text copyable>admin</Text>
-              </Space>
-              
-              <Space direction="vertical" size={0} align="center">
-                <Text type="secondary" strong>Mật khẩu</Text>
-                <Text copyable>admin</Text>
-              </Space>
-            </Flex>
             
             <ThemeToggle $isDark={isDark}>
               <BulbOutlined />

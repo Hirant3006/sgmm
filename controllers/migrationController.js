@@ -419,7 +419,7 @@ const migrationController = {
         console.error('Migration failed:', error);
         if (client) {
             try {
-                await client.query('ROLLBACK');
+        await client.query('ROLLBACK');
                 console.log('Transaction rolled back');
             } catch (rollbackError) {
                 console.error('Error rolling back transaction:', rollbackError);
@@ -434,7 +434,7 @@ const migrationController = {
         });
     } finally {
         if (client) {
-            client.release();
+        client.release();
             console.log('Database client released');
         }
     }

@@ -35,9 +35,10 @@ const orderController = {
       // Cache the response
       cache.set(cacheKey, response);
 
-      // Compress response
-      res.set('Content-Encoding', 'gzip');
+      // Set cache control headers
       res.set('Cache-Control', 'public, max-age=600'); // Cache for 10 minutes
+      
+      // Send response without manual compression
       res.json(response);
     } catch (error) {
       console.error('Error in orderController.getAll:', error);

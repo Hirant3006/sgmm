@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const fs = require('fs');
+const compression = require('compression');
 
 // Import routes
 const apiRoutes = require('./routes');
@@ -16,6 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 
 // Middleware
+app.use(compression());
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? ['https://xenuocmiatuan.vercel.app', 'https://xenuocmiatuan.com'] 
